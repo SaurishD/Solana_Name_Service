@@ -13,6 +13,31 @@ pub mod solana_name_service {
         msg!("PDA initialized with value {}", pk);
         Ok(())
     }
+
+    pub fn update_address(ctx: Context<Update>, pk: Pubkey) -> Result<Pubkey>{
+        let store = &mut ctx.accounts.address_store;
+        if store.owner != ctx.accounts.user.key(){
+            return Err(ProgramError::IllegalOwner.into());
+        }
+        store.address = pk;
+        Ok(pk)
+    }
+
+    pub fn get_address(ctx: Context<Get>) -> Result<Pubkey>{
+        let store = &ctx.accounts.address_store;
+        Ok(store.address)
+    }
+
+    pub fn close_domain_mapping(ctx: Context<Close>) -> Result<()> {
+        let store = &mut ctx.accounts.address_store;
+        let user = &mut ctx.accounts.user;
+
+        let lamports = store.to_account_info().lamports();
+        **user.to_account_info().try_borrow_mut_lamports()? += lamports;
+        **store.to_account_info().try_borrow_mut_lamports()? = 0;
+
+        Ok(())
+    }
 }
 
 #[derive(Accounts)]
@@ -30,6 +55,17 @@ pub struct Initialize<'info> {
     )]
     pub address_store: Account<'info, AddressStore>,
     pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+#[instruction(name: String)]
+pub struct Get<'info> {
+    #[account(
+        seeds=[name.as_bytes()],
+        bump
+    )]
+    pub address_store: Account<'info, AddressStore>,
+    pub user: Signer<'info>
 }
 
 #[derive(Accounts)]
