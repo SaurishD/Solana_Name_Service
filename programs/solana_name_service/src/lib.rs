@@ -41,7 +41,7 @@ pub mod solana_name_service {
 }
 
 #[derive(Accounts)]
-#[instruction(seed: String)]
+#[instruction(name: String)]
 pub struct Initialize<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
@@ -49,8 +49,8 @@ pub struct Initialize<'info> {
     #[account(  
         init_if_needed,
         payer=user,
-        space=20,
-        seeds=[seed.as_bytes()],
+        space=DISCRIMINATOR + AddressStore::INIT_SPACE,
+        seeds=[name.as_ref()],
         bump
     )]
     pub address_store: Account<'info, AddressStore>,
@@ -61,7 +61,7 @@ pub struct Initialize<'info> {
 #[instruction(name: String)]
 pub struct Get<'info> {
     #[account(
-        seeds=[name.as_bytes()],
+        seeds=[name.as_ref()],
         bump
     )]
     pub address_store: Account<'info, AddressStore>,
@@ -76,7 +76,7 @@ pub struct Update<'info> {
 
     #[account(
         mut,
-        seeds=[seed.as_bytes()],
+        seeds=[seed.as_ref()],
         bump
     )]
     pub address_store: Account<'info, AddressStore>,
@@ -90,13 +90,16 @@ pub struct Close<'info> {
 
     #[account(
         mut,
-        seeds=[seed.as_bytes()],
+        seeds=[seed.as_ref()],
         bump
     )]
     pub address_store: Account<'info, AddressStore>,
 }
 #[account]
+#[derive(InitSpace)]
 pub struct AddressStore{
     pub owner: Pubkey,
     pub address: Pubkey 
 }
+
+const DISCRIMINATOR: usize = 8;
