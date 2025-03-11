@@ -6,20 +6,21 @@ declare_id!("AMHL7gijZFDF6VKQzbT3TkuPSHmP76HP7KxBpV9RiG3y");
 pub mod solana_name_service {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>, pk: Pubkey) -> Result<()> {
+    pub fn initialize(ctx: Context<Initialize>,domain_name: String, pk: Pubkey) -> Result<()> {
         let store = &mut ctx.accounts.address_store;
         store.address = pk;
         store.owner = ctx.accounts.user.key();
-        msg!("PDA initialized with value {}", pk);
+        msg!("PDA initialized for {} with value {}",domain_name, pk);
         Ok(())
     }
 
-    pub fn update_address(ctx: Context<Update>, pk: Pubkey) -> Result<Pubkey>{
+    pub fn update_address(ctx: Context<Update>, domain_name: String, pk: Pubkey) -> Result<Pubkey>{
         let store = &mut ctx.accounts.address_store;
         if store.owner != ctx.accounts.user.key(){
             return Err(ProgramError::IllegalOwner.into());
         }
         store.address = pk;
+        msg!("Address updated for {} with value {}",domain_name, pk);
         Ok(pk)
     }
 
@@ -28,20 +29,20 @@ pub mod solana_name_service {
         Ok(store.address)
     }
 
-    pub fn close_domain_mapping(ctx: Context<Close>) -> Result<()> {
+    pub fn close_domain_mapping(ctx: Context<Close>, domain_name: String) -> Result<()> {
         let store = &mut ctx.accounts.address_store;
         let user = &mut ctx.accounts.user;
 
         let lamports = store.to_account_info().lamports();
         **user.to_account_info().try_borrow_mut_lamports()? += lamports;
         **store.to_account_info().try_borrow_mut_lamports()? = 0;
-
+        msg!("PDA closed for {}",domain_name);
         Ok(())
     }
 }
 
 #[derive(Accounts)]
-#[instruction(name: String)]
+#[instruction(domain_name: String)]
 pub struct Initialize<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
@@ -50,7 +51,7 @@ pub struct Initialize<'info> {
         init_if_needed,
         payer=user,
         space=DISCRIMINATOR + AddressStore::INIT_SPACE,
-        seeds=[name.as_ref()],
+        seeds=[domain_name.as_ref()],
         bump
     )]
     pub address_store: Account<'info, AddressStore>,
@@ -58,10 +59,10 @@ pub struct Initialize<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction(name: String)]
+#[instruction(domain_name: String)]
 pub struct Get<'info> {
     #[account(
-        seeds=[name.as_ref()],
+        seeds=[domain_name.as_ref()],
         bump
     )]
     pub address_store: Account<'info, AddressStore>,
@@ -69,32 +70,33 @@ pub struct Get<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction(seed: String)]
+#[instruction(domain_name: String)]
 pub struct Update<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
 
     #[account(
         mut,
-        seeds=[seed.as_ref()],
+        seeds=[domain_name.as_ref()],
         bump
     )]
     pub address_store: Account<'info, AddressStore>,
 }
 
 #[derive(Accounts)]
-#[instruction(seed: String)]
+#[instruction(domain_name: String)]
 pub struct Close<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
 
     #[account(
         mut,
-        seeds=[seed.as_ref()],
+        seeds=[domain_name.as_ref()],
         bump
     )]
     pub address_store: Account<'info, AddressStore>,
 }
+
 #[account]
 #[derive(InitSpace)]
 pub struct AddressStore{
