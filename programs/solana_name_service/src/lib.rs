@@ -4,9 +4,10 @@ declare_id!("AMHL7gijZFDF6VKQzbT3TkuPSHmP76HP7KxBpV9RiG3y");
 
 #[program]
 pub mod solana_name_service {
+
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>,domain_name: String, pk: Pubkey) -> Result<()> {
+    pub fn add_domain_address(ctx: Context<AddDomainAddress>,domain_name: String, pk: Pubkey) -> Result<()> {
         let store = &mut ctx.accounts.address_store;
         store.address = pk;
         store.owner = ctx.accounts.user.key();
@@ -14,7 +15,7 @@ pub mod solana_name_service {
         Ok(())
     }
 
-    pub fn update_address(ctx: Context<Update>, domain_name: String, pk: Pubkey) -> Result<Pubkey>{
+    pub fn update_domain_address(ctx: Context<UpdateDomainAddress>, domain_name: String, pk: Pubkey) -> Result<Pubkey>{
         let store = &mut ctx.accounts.address_store;
         if store.owner != ctx.accounts.user.key(){
             return Err(ProgramError::IllegalOwner.into());
@@ -23,13 +24,14 @@ pub mod solana_name_service {
         msg!("Address updated for {} with value {}",domain_name, pk);
         Ok(pk)
     }
-
-    pub fn get_address(ctx: Context<Get>) -> Result<Pubkey>{
+    
+    #[allow(unused_variables)]
+    pub fn get_address(ctx: Context<GetDomainAddress>, domain_name: String) -> Result<Pubkey>{
         let store = &ctx.accounts.address_store;
         Ok(store.address)
     }
 
-    pub fn close_domain_mapping(ctx: Context<Close>, domain_name: String) -> Result<()> {
+    pub fn close_domain_mapping(ctx: Context<CloseDomainAddress>, domain_name: String) -> Result<()> {
         let store = &mut ctx.accounts.address_store;
         let user = &mut ctx.accounts.user;
 
@@ -43,7 +45,7 @@ pub mod solana_name_service {
 
 #[derive(Accounts)]
 #[instruction(domain_name: String)]
-pub struct Initialize<'info> {
+pub struct AddDomainAddress<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
 
@@ -60,7 +62,7 @@ pub struct Initialize<'info> {
 
 #[derive(Accounts)]
 #[instruction(domain_name: String)]
-pub struct Get<'info> {
+pub struct GetDomainAddress<'info> {
     #[account(
         seeds=[domain_name.as_ref()],
         bump
@@ -71,7 +73,7 @@ pub struct Get<'info> {
 
 #[derive(Accounts)]
 #[instruction(domain_name: String)]
-pub struct Update<'info> {
+pub struct UpdateDomainAddress<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
 
@@ -85,7 +87,7 @@ pub struct Update<'info> {
 
 #[derive(Accounts)]
 #[instruction(domain_name: String)]
-pub struct Close<'info> {
+pub struct CloseDomainAddress<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
 
