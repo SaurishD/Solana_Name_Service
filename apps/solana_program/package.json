@@ -1,6 +1,10 @@
 {
   "license": "ISC",
+  "name": "solana_program",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
+    "dev": "anchor test",
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
   },
