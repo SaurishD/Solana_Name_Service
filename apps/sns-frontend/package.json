@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -15,7 +15,7 @@
     "@solana/wallet-adapter-wallets": "^0.19.32",
     "@solana/web3.js": "^1.98.0",
     "install": "^0.13.0",
-    "next": "15.2.2",
+    "next": "^15.2.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
