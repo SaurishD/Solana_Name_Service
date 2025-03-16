@@ -21,14 +21,14 @@ describe("solana_name_service", () => {
 
     await provider.connection.confirmTransaction( 
       {
-        signature: await provider.connection.requestAirdrop(user.publicKey, 1_000_000_000), 
+        signature: await provider.connection.requestAirdrop(user.publicKey, 10_000_000_000), 
         blockhash: (await provider.connection.getLatestBlockhash()).blockhash,
         lastValidBlockHeight: (await provider.connection.getLatestBlockhash()).lastValidBlockHeight,}
     );
 
+    const plan = { day30: {} };
 
-
-    const tx = await program.methods.addDomainAddress(domainName,user.publicKey).accountsStrict({
+    const tx = await program.methods.addDomainAddress(domainName,user.publicKey, plan).accountsStrict({
       user: user.publicKey,
       addressStore: domainPDA,
       systemProgram: anchor.web3.SystemProgram.programId

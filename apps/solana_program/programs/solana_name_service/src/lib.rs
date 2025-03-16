@@ -1,5 +1,7 @@
 use anchor_lang::prelude::*;
 pub mod state;
+pub mod types;
+use types::plan::*;
 
 pub mod instructions;
 use instructions::{add_domain::*, update_domain::*, close_domain::*, get_domain::*};
@@ -12,8 +14,8 @@ pub mod solana_name_service {
 
     use super::*;
 
-    pub fn add_domain_address(ctx: Context<AddDomainAddress>,domain_name: String, pk: Pubkey) -> Result<()> {
-        add_domain::add_domain_address(ctx, domain_name, pk)
+    pub fn add_domain_address(ctx: Context<AddDomainAddress>,domain_name: String, pk: Pubkey, registration_plan: Plan) -> Result<()> {
+        add_domain::add_domain_address(ctx, domain_name, pk, registration_plan)
     }
 
     pub fn update_domain_address(ctx: Context<UpdateDomainAddress>, domain_name: String, pk: Pubkey) -> Result<Pubkey>{

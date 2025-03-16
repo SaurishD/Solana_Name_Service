@@ -1578,6 +1578,7 @@ name = "solana_name_service"
 version = "0.1.0"
 dependencies = [
  "anchor-lang",
+ "borsh 0.10.4",
 ]
 
 [[package]]
