@@ -1,0 +1,13 @@
+{
+  "crates": [
+    {
+      "root_module": "apps/solana_program/programs/solana_name_service/src/lib.rs",
+      "edition": "2021",
+      "deps": [],
+      "cfg": [],
+      "target": null,
+      "include_dirs": ["apps/solana_program"]
+    }
+  ],
+  "sysroot_src": null
+}

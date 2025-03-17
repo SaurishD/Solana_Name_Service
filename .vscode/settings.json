@@ -1,0 +1,6 @@
+{
+    "rust-analyzer.linkedProjects": [
+      "apps/solana_program/Cargo.toml"
+    ],
+    "rust-analyzer.checkOnSave.command": "clippy"
+  }
