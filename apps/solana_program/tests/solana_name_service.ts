@@ -69,6 +69,23 @@ describe("solana_name_service", () => {
     expect(addressStore.address.toString()).eq(address.toString())
   })
 
+  it("Extends Domain Validity", async () => {
+    const [domainPDA] = await anchor.web3.PublicKey.findProgramAddressSync([Buffer.from(domainName)], program.programId);
+    const plan = {day90:{}}
+    let addressStorPrev = await program.account.addressStore.fetch(domainPDA)
+    const expiration_prev = addressStorPrev.expirationTime.toNumber();
+    const tx = await program.methods.extendDomainValidity(domainName,plan).accountsStrict({
+      user: user.publicKey,
+      addressStore: domainPDA,
+      systemProgram: anchor.web3.SystemProgram.programId
+    }).signers([user]).rpc();
+
+    let addressStorLater = await program.account.addressStore.fetch(domainPDA)
+    const expiration_later = addressStorLater.expirationTime.toNumber();
+    
+    expect(expiration_later-expiration_prev).eq(90*24*60*60)
+  })
+
   it("Deletes domain address", async () => {
     const [domainPDA] = await anchor.web3.PublicKey.findProgramAddressSync([Buffer.from(domainName)], program.programId)
 

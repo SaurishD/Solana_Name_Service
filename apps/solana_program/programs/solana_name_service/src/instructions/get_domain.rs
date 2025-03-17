@@ -1,6 +1,5 @@
-
-use anchor_lang::prelude::*;
 use crate::state::AddressStore;
+use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
 #[instruction(domain_name: String)]
@@ -10,12 +9,11 @@ pub struct GetDomainAddress<'info> {
         bump
     )]
     pub address_store: Account<'info, AddressStore>,
-    pub user: Signer<'info>
+    pub user: Signer<'info>,
 }
 
-
 #[allow(unused_variables)]
-    pub fn get_address(ctx: Context<GetDomainAddress>, domain_name: String) -> Result<Pubkey>{
-        let store = &ctx.accounts.address_store;
-        Ok(store.address)
-    }
+pub fn get_address(ctx: Context<GetDomainAddress>, domain_name: String) -> Result<Pubkey> {
+    let store = &ctx.accounts.address_store;
+    Ok(store.address)
+}
