@@ -1,4 +1,4 @@
-**Solana Name Service - Technical Requirements Document**
+# **Solana Name Service - Technical Requirements Document**
 
 ## **1. Overview**
 The Solana Name Service (SNS) is a decentralized, on-chain domain name system for the Solana blockchain. Users can register human-readable domain names (e.g., `username.sol`), associate them with wallet addresses, transfer ownership, and manage subdomains. The system includes smart contracts, a frontend interface, and an optional backend for indexing and caching data.
@@ -77,15 +77,6 @@ The Solana Name Service (SNS) is a decentralized, on-chain domain name system fo
 - **Access Controls**: Only domain owners can modify records.
 - **Rate Limiting**: Prevent spam domain registrations.
 
-## **7. Timeline (1 Week Development Plan)**
-
-| Day  | Task |
-|------|------|
-| 1-2  | Develop smart contract & test locally |
-| 3    | Deploy to Devnet, write unit tests |
-| 4-5  | Build React frontend with Web3.js |
-| 6    | Implement backend (optional) & finalize UI |
-| 7    | Testing, documentation & deployment |
 
 ## **8. GitHub Repository Structure**
 ```
@@ -93,7 +84,6 @@ solana-name-service/
 ├── contracts/  # Rust-based Solana smart contracts
 ├── frontend/   # React frontend with Solana Web3.js
 ├── backend/    # Optional Node.js backend for indexing
-├── tests/      # Unit and integration tests
 └── README.md   # Documentation
 ```
 
