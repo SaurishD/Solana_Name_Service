@@ -11,7 +11,7 @@ describe("solana_name_service", () => {
   const program = anchor.workspace.SolanaNameService as Program<SolanaNameService>;
   const domainName = "solana.sol"
 
-  const user = anchor.web3.Keypair.generate()
+  let user = anchor.web3.Keypair.generate()
 
 
   it("Is Adds domain address!", async () => {
@@ -84,6 +84,25 @@ describe("solana_name_service", () => {
     const expiration_later = addressStorLater.expirationTime.toNumber();
     
     expect(expiration_later-expiration_prev).eq(90*24*60*60)
+  })
+
+  it("Transfers Domain ownership", async () => {
+    const [domainPDA] = await anchor.web3.PublicKey.findProgramAddressSync([Buffer.from(domainName)], program.programId);
+   
+    const prevUser = user.publicKey;
+    let newuser = anchor.web3.Keypair.generate()
+
+
+    const tx = await program.methods.transferDomainOwnership(domainName,newuser.publicKey).accountsStrict({
+      user: user.publicKey,
+      addressStore: domainPDA
+    }).signers([user]).rpc();
+
+    user = newuser;
+    let addressStorLater = await program.account.addressStore.fetch(domainPDA)
+
+    
+    expect(addressStorLater.owner.toString()).eq(user.publicKey.toString())
   })
 
   it("Deletes domain address", async () => {

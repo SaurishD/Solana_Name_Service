@@ -4,7 +4,10 @@ pub mod types;
 use types::plan::*;
 
 pub mod instructions;
-use instructions::{add_domain::*, close_domain::*, get_domain::*, update_domain::*, extend_domain_validity::*};
+use instructions::{
+    add_domain::*, close_domain::*, extend_domain_validity::*, get_domain::*, transfer_domain::*,
+    update_domain::*,
+};
 declare_id!("AMHL7gijZFDF6VKQzbT3TkuPSHmP76HP7KxBpV9RiG3y");
 
 #[program]
@@ -12,7 +15,10 @@ pub mod solana_name_service {
 
     use instructions::extend_domain_validity::ExtendDomainValidity;
 
-    use crate::instructions::{add_domain, close_domain, extend_domain_validity, get_domain, update_domain};
+    use crate::instructions::{
+        add_domain, close_domain, extend_domain_validity, get_domain, transfer_domain,
+        update_domain,
+    };
 
     use super::*;
 
@@ -33,8 +39,20 @@ pub mod solana_name_service {
         update_domain::update_domain_address(ctx, domain_name, pk)
     }
 
-    pub fn extend_domain_validity(ctx: Context<ExtendDomainValidity>, domain_name: String, extention_plan: Plan) -> Result<()> {
-        extend_domain_validity::extend_domain_validity(ctx,domain_name,extention_plan)
+    pub fn extend_domain_validity(
+        ctx: Context<ExtendDomainValidity>,
+        domain_name: String,
+        extention_plan: Plan,
+    ) -> Result<()> {
+        extend_domain_validity::extend_domain_validity(ctx, domain_name, extention_plan)
+    }
+
+    pub fn transfer_domain_ownership(
+        ctx: Context<TransferDomainOwnership>,
+        domain_name: String,
+        new_owner: Pubkey,
+    ) -> Result<()> {
+        transfer_domain::transfer_domain_ownership(ctx, domain_name, new_owner)
     }
 
     #[allow(unused_variables)]
